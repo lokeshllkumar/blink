@@ -7,18 +7,38 @@ import Navbar from '@/components/Navbar.vue';
 
 import { ref, computed, onMounted } from 'vue';
 import { useToast } from 'vue-toastification';
+import { db } from './firebase/firebaseInit';
+import { collection, getDocs } from 'firebase/firestore';
 
 const toast = useToast();
 
 const transactions = ref([
 ]);
 
-onMounted(() => {
+onMounted(async () => {
+  const querySnapshot = await getDocs(collection(db, "transactions"));
+
+  let localStore = [];
+
+  querySnapshot.forEach((doc) => {
+    console.log(doc.id, "->", doc.data());
+    const transaction = {
+      id: doc.id,
+      date: doc.data().date,
+      description: doc.data().description,
+      amount: doc.data().amount,
+    };
+    localStore.push(transaction);
+  });
+
+  transactions.value = localStore;
+  /*
   const savedTransactions = JSON.parse(localStorage.getItem('transactions'));
 
   if (savedTransactions) {
     transactions.value = savedTransactions;
   }
+    */
 });
 
 const total = computed(() => {
