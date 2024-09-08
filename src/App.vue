@@ -41,17 +41,21 @@ const handleTransactionSubmission = (transactionData) => {
     amount: transactionData.amount
   });
 
+  saveTransactions();
+
   toast.success('Transaction added');
 };
 
 const handleTransactionDeletion = (id) => {
   transactions.value = transactions.value.filter((transaction) => transaction.id !== id);
 
+  saveTransactions();
+
   toast.success('Transaction deleted');
 };
 
 const saveTransactions = () => {
-  localStorage.setItem('transactions', JSON.stringify(transactions, value));
+  localStorage.setItem('transactions', JSON.stringify(transactions.value));
 }
 </script>
 
