@@ -5,7 +5,7 @@ import { defineProps } from 'vue';
 const props = defineProps({
   transactions: {
     type: Array,
-    requried: true,
+    required: true,
   },
 });
 
