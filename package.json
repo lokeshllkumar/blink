@@ -10,7 +10,9 @@
   },
   "dependencies": {
     "firebase": "^10.13.1",
+    "uuid": "^10.0.0",
     "vue": "^3.4.29",
+    "vue-router": "^4.4.3",
     "vue-toastification": "^2.0.0-rc.5",
     "vuefire": "^3.2.0"
   },
