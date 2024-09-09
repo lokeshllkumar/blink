@@ -5,23 +5,29 @@ import List from '@/components/List.vue';
 import Add from '@/components/Add.vue'
 import Navbar from '@/components/Navbar.vue';
 
+import { RouterView } from 'vue-router';
+
 import { ref, computed, onMounted } from 'vue';
+import { v4 as uuidv4 } from 'uuid';
 import { useToast } from 'vue-toastification';
 import { db } from './firebase/firebaseInit';
-import { collection, getDocs } from 'firebase/firestore';
+import { addDoc, collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 
 const toast = useToast();
 
 const transactions = ref([
 ]);
 
-onMounted(async () => {
+const transactionsCollectionRef = collection(db, "transactions");
+
+onMounted(() => {
+  /*
   const querySnapshot = await getDocs(collection(db, "transactions"));
 
   let localStore = [];
 
   querySnapshot.forEach((doc) => {
-    console.log(doc.id, "->", doc.data());
+    console.log("Data fetched from database successfully!");
     const transaction = {
       id: doc.id,
       date: doc.data().date,
@@ -32,6 +38,23 @@ onMounted(async () => {
   });
 
   transactions.value = localStore;
+
+  */
+
+  onSnapshot(transactionsCollectionRef, (querySnapshot) => {
+    const localStore = [];
+    querySnapshot.forEach((doc) => {
+      const transaction = {
+        id: doc.id,
+        date: doc.data().date,
+        description: doc.data().description,
+        amount: doc.data().amount,
+      };
+      localStore.push(transaction);
+    });
+    transactions.value = localStore;
+  })
+
   /*
   const savedTransactions = JSON.parse(localStorage.getItem('transactions'));
 
@@ -53,30 +76,42 @@ const genUniqueId = () => {
 };
 
 const handleTransactionSubmission = (transactionData) => {
-
+  addDoc(transactionsCollectionRef, {
+    date: transactionData.date,
+    description: transactionData.description,
+    amount: transactionData.amount
+  });
+  /*
   transactions.value.push({
     id: genUniqueId(),
     date: transactionData.date,
     description: transactionData.description,
     amount: transactionData.amount
   });
+  
 
   saveTransactions();
+  */
 
   toast.success('Transaction added');
 };
 
 const handleTransactionDeletion = (id) => {
+  deleteDoc(doc(transactionsCollectionRef, id));
+  /*
   transactions.value = transactions.value.filter((transaction) => transaction.id !== id);
 
   saveTransactions();
+  */
 
   toast.success('Transaction deleted');
 };
 
+/*
 const saveTransactions = () => {
   localStorage.setItem('transactions', JSON.stringify(transactions.value));
 }
+*/
 </script>
 
 <template>
