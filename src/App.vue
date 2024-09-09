@@ -8,10 +8,9 @@ import Navbar from '@/components/Navbar.vue';
 import { RouterView } from 'vue-router';
 
 import { ref, computed, onMounted } from 'vue';
-import { v4 as uuidv4 } from 'uuid';
 import { useToast } from 'vue-toastification';
 import { db } from './firebase/firebaseInit';
-import { addDoc, collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
+import { query, orderBy, addDoc, collection, onSnapshot, doc, deleteDoc } from 'firebase/firestore';
 
 const toast = useToast();
 
@@ -19,6 +18,7 @@ const transactions = ref([
 ]);
 
 const transactionsCollectionRef = collection(db, "transactions");
+const transactionsCollectionQuery = query(transactionsCollectionRef, orderBy("date", "desc"));
 
 onMounted(() => {
   /*
@@ -41,11 +41,10 @@ onMounted(() => {
 
   */
 
-  onSnapshot(transactionsCollectionRef, (querySnapshot) => {
+  onSnapshot(transactionsCollectionQuery, (querySnapshot) => {
     const localStore = [];
     querySnapshot.forEach((doc) => {
       const transaction = {
-        id: doc.id,
         date: doc.data().date,
         description: doc.data().description,
         amount: doc.data().amount,
