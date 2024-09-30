@@ -21,26 +21,6 @@ const transactionsCollectionRef = collection(db, "transactions");
 const transactionsCollectionQuery = query(transactionsCollectionRef, orderBy("date", "desc"));
 
 onMounted(() => {
-  /*
-  const querySnapshot = await getDocs(collection(db, "transactions"));
-
-  let localStore = [];
-
-  querySnapshot.forEach((doc) => {
-    console.log("Data fetched from database successfully!");
-    const transaction = {
-      id: doc.id,
-      date: doc.data().date,
-      description: doc.data().description,
-      amount: doc.data().amount,
-    };
-    localStore.push(transaction);
-  });
-
-  transactions.value = localStore;
-
-  */
-
   onSnapshot(transactionsCollectionQuery, (querySnapshot) => {
     const localStore = [];
     querySnapshot.forEach((doc) => {
@@ -54,14 +34,6 @@ onMounted(() => {
     });
     transactions.value = localStore;
   })
-
-  /*
-  const savedTransactions = JSON.parse(localStorage.getItem('transactions'));
-
-  if (savedTransactions) {
-    transactions.value = savedTransactions;
-  }
-    */
 });
 
 const total = computed(() => {
@@ -71,47 +43,21 @@ const total = computed(() => {
   }, 0);
 });
 
-const genUniqueId = () => {
-  return Math.floor(Math.random() * 1000000);
-};
-
 const handleTransactionSubmission = (transactionData) => {
   addDoc(transactionsCollectionRef, {
     date: transactionData.date,
     description: transactionData.description,
     amount: transactionData.amount
   });
-  /*
-  transactions.value.push({
-    id: genUniqueId(),
-    date: transactionData.date,
-    description: transactionData.description,
-    amount: transactionData.amount
-  });
-  
-
-  saveTransactions();
-  */
 
   toast.success('Transaction added');
 };
 
 const handleTransactionDeletion = (id) => {
   deleteDoc(doc(transactionsCollectionRef, id));
-  /*
-  transactions.value = transactions.value.filter((transaction) => transaction.id !== id);
-
-  saveTransactions();
-  */
 
   toast.success('Transaction deleted');
 };
-
-/*
-const saveTransactions = () => {
-  localStorage.setItem('transactions', JSON.stringify(transactions.value));
-}
-*/
 </script>
 
 <template>

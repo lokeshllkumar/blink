@@ -32,8 +32,6 @@ onMounted(async () => {
   });
 
   transactions.value = localStore;
-
-  console.log(transactions);
   /*
   const savedTransactions = JSON.parse(localStorage.getItem('transactions'));
 
@@ -49,6 +47,36 @@ const total = computed(() => {
     return acc + transaction.amount;
   }, 0);
 });
+
+const genUniqueId = () => {
+  return Math.floor(Math.random() * 1000000);
+};
+
+const handleTransactionSubmission = (transactionData) => {
+
+  transactions.value.push({
+    id: genUniqueId(),
+    date: transactionData.date,
+    description: transactionData.description,
+    amount: transactionData.amount
+  });
+
+  saveTransactions();
+
+  toast.success('Transaction added');
+};
+
+const handleTransactionDeletion = (id) => {
+  transactions.value = transactions.value.filter((transaction) => transaction.id !== id);
+
+  saveTransactions();
+
+  toast.success('Transaction deleted');
+};
+
+const saveTransactions = () => {
+  localStorage.setItem('transactions', JSON.stringify(transactions.value));
+}
 </script>
 
 <template>
@@ -57,8 +85,8 @@ const total = computed(() => {
   <div class="container">
     <Balance :total="+total" />
     <br />
-    <Add />
+    <Add @transactionSubmitted="handleTransactionSubmission" />
     <br />
-    <List /> 
+    <List :transactions="transactions" @transactionDeleted="handleTransactionDeletion" /> 
   </div>
 </template>
