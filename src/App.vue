@@ -45,6 +45,7 @@ onMounted(() => {
     const localStore = [];
     querySnapshot.forEach((doc) => {
       const transaction = {
+        id: doc.id,
         date: doc.data().date,
         description: doc.data().description,
         amount: doc.data().amount,
